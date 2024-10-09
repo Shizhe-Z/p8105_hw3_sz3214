@@ -99,9 +99,26 @@ snow_dist = ny_noaa |>
 tmax_tmin + snow_dist
 ```
 
+# Problem 2
+
+**data cleaning**
+```{r}
+accel = read.csv("nhanes_accel.csv") |> 
+  janitor::clean_names()
 
 
-
+covar = read.csv("nhanes_covar.csv", skip = 4) |> 
+  janitor::clean_names() |> 
+  filter(age >= 21, !is.na(sex), !is.na(age), !is.na(bmi), !is.na(education)) |> 
+  mutate(
+    sex = factor(sex, levels = c(1, 2), labels = c("Male", "Female")),
+    education = factor(education, 
+                          levels = c(1, 2, 3), 
+                          labels = c("Less than high school", 
+                                     "High school equivalent", 
+                                     "More than high school"))
+)
+```
 
 
 
