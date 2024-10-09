@@ -465,7 +465,6 @@ tmax_tmin + snow_dist</code></pre>
 <pre class="r"><code>accel = read.csv(&quot;nhanes_accel.csv&quot;) |&gt; 
   janitor::clean_names()
 
-
 covar = read.csv(&quot;nhanes_covar.csv&quot;, skip = 4) |&gt; 
   janitor::clean_names() |&gt; 
   filter(age &gt;= 21, !is.na(sex), !is.na(age), !is.na(bmi), !is.na(education)) |&gt; 
@@ -476,7 +475,9 @@ covar = read.csv(&quot;nhanes_covar.csv&quot;, skip = 4) |&gt;
                           labels = c(&quot;Less than high school&quot;, 
                                      &quot;High school equivalent&quot;, 
                                      &quot;More than high school&quot;))
-)</code></pre>
+  )
+
+mims = inner_join(accel, covar, by = &quot;seqn&quot;)</code></pre>
 </div>
 
 

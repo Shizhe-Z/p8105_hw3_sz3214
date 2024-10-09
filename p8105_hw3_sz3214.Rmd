@@ -106,7 +106,6 @@ tmax_tmin + snow_dist
 accel = read.csv("nhanes_accel.csv") |> 
   janitor::clean_names()
 
-
 covar = read.csv("nhanes_covar.csv", skip = 4) |> 
   janitor::clean_names() |> 
   filter(age >= 21, !is.na(sex), !is.na(age), !is.na(bmi), !is.na(education)) |> 
@@ -117,8 +116,14 @@ covar = read.csv("nhanes_covar.csv", skip = 4) |>
                           labels = c("Less than high school", 
                                      "High school equivalent", 
                                      "More than high school"))
-)
+  )
+
+mims = inner_join(accel, covar, by = "seqn")
 ```
 
+
+```{r}
+
+```
 
 
