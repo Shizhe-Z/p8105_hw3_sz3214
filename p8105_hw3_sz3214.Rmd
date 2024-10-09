@@ -9,6 +9,7 @@ output: html_document
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(dplyr)
+library(ggplot2)
 ```
 
 # Problem 1
@@ -42,4 +43,25 @@ Several key variables contain many NA values:
 `snwd`: 22.80% missing value.
 `tmax`: 43.71% missing value.
 `tmin`: 43.71% missing value.
+
+**data cleaning**
+```{r}
+ny_noaa = ny_noaa |> 
+  janitor::clean_names() |> 
+  mutate(year = format(date, "%Y"),
+         month = format(date, "%m"),
+         day = format(date, "%d"),
+         tmax = as.integer(tmax) / 10,
+         tmin = as.integer(tmin) / 10,
+         prcp = prcp / 10)
+
+ny_noaa |> 
+  group_by(snow) |> 
+  summarise(count = n()) |> 
+  arrange(desc(count)) |> 
+  head(n=5)
+```
+The most commonly observed value for snowfall is 0. 
+
+
 

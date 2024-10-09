@@ -401,6 +401,30 @@ representing the minimum temperature.</p>
 missing value. <code>snwd</code>: 22.80% missing value.
 <code>tmax</code>: 43.71% missing value. <code>tmin</code>: 43.71%
 missing value.</p>
+<p><strong>data cleaning</strong></p>
+<pre class="r"><code>ny_noaa = ny_noaa |&gt; 
+  janitor::clean_names() |&gt; 
+  mutate(year = format(date, &quot;%Y&quot;),
+         month = format(date, &quot;%m&quot;),
+         day = format(date, &quot;%d&quot;),
+         tmax = as.integer(tmax) / 10,
+         tmin = as.integer(tmin) / 10,
+         prcp = prcp / 10)
+
+ny_noaa |&gt; 
+  group_by(snow) |&gt; 
+  summarise(count = n()) |&gt; 
+  arrange(desc(count)) |&gt; 
+  head(n=5)</code></pre>
+<pre><code>## # A tibble: 5 × 2
+##    snow   count
+##   &lt;int&gt;   &lt;int&gt;
+## 1     0 2008508
+## 2    NA  381221
+## 3    25   31022
+## 4    13   23095
+## 5    51   18274</code></pre>
+<p>The most commonly observed value for snowfall is 0.</p>
 </div>
 
 
