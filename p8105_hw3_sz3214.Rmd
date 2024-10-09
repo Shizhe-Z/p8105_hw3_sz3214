@@ -10,6 +10,7 @@ output: html_document
 library(tidyverse)
 library(dplyr)
 library(ggplot2)
+library(patchwork)
 ```
 
 # Problem 1
@@ -80,5 +81,27 @@ ny_noaa |>
 ```
 There is a gradual increase around 0°C in temperatures  over time in Jan. In July, the temperatures are around 25-30°C across all years and didn't show obviously trend.
 In the January, there are a few data points slightly above or below 0°C, which could be outliers.
+
+**plot 2**
+```{r}
+tmax_tmin = ny_noaa |> 
+  filter(!is.na(tmax) & !is.na(tmin)) |> 
+  ggplot(aes(x=tmin, y=tmax)) +
+  geom_hex(bins = 30) +
+  labs(title = "Hexbin Plot of Tmax vs Tmin", x = "Tmin (°C)", y = "Tmax (°C)")
+
+snow_dist = ny_noaa |> 
+  filter(snow > 0 & snow < 100) |> 
+  ggplot(aes(x=year, y=snow)) +
+  geom_violin() +
+  labs(title = "Snowfall Distribution (0 < Snowfall < 100) by Year", x = "Snowfall (mm)", y = "Year")
+
+tmax_tmin + snow_dist
+```
+
+
+
+
+
 
 
