@@ -121,9 +121,28 @@ covar = read.csv("nhanes_covar.csv", skip = 4) |>
 mims = inner_join(accel, covar, by = "seqn")
 ```
 
-
+**table and plot**
 ```{r}
+mims |> 
+  group_by(sex, education) |> 
+  summarize(count = n()) |> 
+  pivot_wider(
+    names_from = sex,
+    values_from = count
+  ) |> 
+  knitr::kable()
 
+mims |>
+  group_by(sex, education) |> 
+  ggplot(aes(x = sex, y = age, color = education)) +
+  geom_boxplot() +
+  labs(
+    title = "Age distributions for men and women in each education category",
+    x = "Sex", y = "Age"
+  ) 
 ```
+The "Less than high school" group shows a near-equal representation of men and women.
+There is a noticeable difference in the "High school equivalent" category, where men outnumber women.
+For the "More than high school" group, the balance between genders is relatively even, slightly favoring women. The "More than high school" group has the widest age range.
 
 
