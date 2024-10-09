@@ -48,9 +48,9 @@ Several key variables contain many NA values:
 ```{r}
 ny_noaa = ny_noaa |> 
   janitor::clean_names() |> 
-  mutate(year = format(date, "%Y"),
-         month = format(date, "%m"),
-         day = format(date, "%d"),
+  mutate(year = as.numeric(format(date, "%Y")),
+         month = as.numeric(format(date, "%m")),
+         day = as.numeric(format(date, "%d")),
          tmax = as.integer(tmax) / 10,
          tmin = as.integer(tmin) / 10,
          prcp = prcp / 10)
@@ -63,5 +63,22 @@ ny_noaa |>
 ```
 The most commonly observed value for snowfall is 0. 
 
+**plot 1**
+```{r}
+ny_noaa |> 
+  filter(month == '1' | month == '7') |> 
+  group_by(year, month) |> 
+  summarise(avg_tmax = mean(tmax, na.rm = TRUE), .groups = "drop") |> 
+  ungroup() |> 
+  ggplot(aes(x = year, y = avg_tmax)) +
+  geom_point() +
+  facet_wrap(~month) +
+  labs(
+    title = "Average Max Temperature in January and July Across Years",
+    x = "Year", y = "Average Max Temperature (°C)"
+  ) 
+```
+There is a gradual increase around 0°C in temperatures  over time in Jan. In July, the temperatures are around 25-30°C across all years and didn't show obviously trend.
+In the January, there are a few data points slightly above or below 0°C, which could be outliers.
 
 
