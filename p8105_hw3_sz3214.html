@@ -595,6 +595,91 @@ the day, whereas those with lower education levels (“Less than high
 school”) have lower overall activity and experience earlier declines in
 activity.</p>
 </div>
+<div id="problem-3" class="section level1">
+<h1>Problem 3</h1>
+<p><strong>data cleaning</strong></p>
+<pre class="r"><code>bike201 &lt;- read.csv(&quot;citibike/Jan 2020 Citi.csv&quot;) |&gt; 
+  janitor::clean_names() |&gt; 
+  mutate(year = 2020, month = &quot;Jan&quot;)
+bike207 &lt;- read.csv(&quot;citibike/July 2020 Citi.csv&quot;) |&gt; 
+  janitor::clean_names() |&gt; 
+  mutate(year = 2020, month = &quot;July&quot;)
+bike241 &lt;- read.csv(&quot;citibike/Jan 2024 Citi.csv&quot;) |&gt; 
+  janitor::clean_names() |&gt; 
+  mutate(year = 2024, month = &quot;Jan&quot;)
+bike247 &lt;- read.csv(&quot;citibike/July 2024 Citi.csv&quot;) |&gt; 
+  janitor::clean_names() |&gt; 
+  mutate(year = 2024, month = &quot;July&quot;)
+
+citibike = bind_rows(bike201, bike207, bike241, bike247) 
+
+str(citibike)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    99485 obs. of  9 variables:
+##  $ ride_id           : chr  &quot;4BE06CB33B037044&quot; &quot;26886E034974493B&quot; &quot;24DC56060EBE6260&quot; &quot;EEDC1053582D02E5&quot; ...
+##  $ rideable_type     : chr  &quot;classic_bike&quot; &quot;classic_bike&quot; &quot;classic_bike&quot; &quot;classic_bike&quot; ...
+##  $ weekdays          : chr  &quot;Tuesday&quot; &quot;Wednesday&quot; &quot;Friday&quot; &quot;Sunday&quot; ...
+##  $ duration          : num  15.33 5.31 9.69 7 2.85 ...
+##  $ start_station_name: chr  &quot;Columbus Ave &amp; W 95 St&quot; &quot;2 Ave &amp; E 96 St&quot; &quot;Columbia St &amp; Rivington St&quot; &quot;W 84 St &amp; Columbus Ave&quot; ...
+##  $ end_station_name  : chr  &quot;E 53 St &amp; Madison Ave&quot; &quot;1 Ave &amp; E 110 St&quot; &quot;Grand St &amp; Elizabeth St&quot; &quot;Columbus Ave &amp; W 72 St&quot; ...
+##  $ member_casual     : chr  &quot;member&quot; &quot;member&quot; &quot;member&quot; &quot;member&quot; ...
+##  $ year              : num  2020 2020 2020 2020 2020 2020 2020 2020 2020 2020 ...
+##  $ month             : chr  &quot;Jan&quot; &quot;Jan&quot; &quot;Jan&quot; &quot;Jan&quot; ...</code></pre>
+<p>The final dataset contains 99485 observations with 9 variables
+including: <code>ride_id</code>, <code>rideable_type</code>,
+<code>weekdays</code>, <code>duration</code>,
+<code>start_station_name</code>, <code>end_station_name</code>,
+<code>member_casual</code>, <code>year</code>, <code>month</code>.</p>
+<p><strong>table</strong></p>
+<pre class="r"><code>citibike |&gt; 
+  group_by(year, month, member_casual) |&gt;
+  summarize(number = n()) |&gt; 
+  pivot_wider(
+    names_from = member_casual,
+    values_from = number) |&gt; 
+  knitr::kable()</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;year&#39;, &#39;month&#39;. You can override using the
+## `.groups` argument.</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">year</th>
+<th align="left">month</th>
+<th align="right">casual</th>
+<th align="right">member</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">2020</td>
+<td align="left">Jan</td>
+<td align="right">984</td>
+<td align="right">11436</td>
+</tr>
+<tr class="even">
+<td align="right">2020</td>
+<td align="left">July</td>
+<td align="right">5637</td>
+<td align="right">15411</td>
+</tr>
+<tr class="odd">
+<td align="right">2024</td>
+<td align="left">Jan</td>
+<td align="right">2108</td>
+<td align="right">16753</td>
+</tr>
+<tr class="even">
+<td align="right">2024</td>
+<td align="left">July</td>
+<td align="right">10894</td>
+<td align="right">36262</td>
+</tr>
+</tbody>
+</table>
+<p>From 2020 to 2024, there is notable growth in total rides, especially
+in July 2024, where ridership has surged. This suggests increased
+popularity and perhaps expanded infrastructure or public interest in
+bike-sharing.</p>
+</div>
 
 
 
