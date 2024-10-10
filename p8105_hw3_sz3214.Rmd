@@ -99,6 +99,7 @@ snow_dist = ny_noaa |>
 tmax_tmin + snow_dist
 ```
 
+
 # Problem 2
 
 **data cleaning**
@@ -144,5 +145,54 @@ mims |>
 The "Less than high school" group shows a near-equal representation of men and women.
 There is a noticeable difference in the "High school equivalent" category, where men outnumber women.
 For the "More than high school" group, the balance between genders is relatively even, slightly favoring women. The "More than high school" group has the widest age range.
+
+**activity vs age**
+```{r}
+mims |> 
+  rowwise() |>
+  mutate(activity = sum(c_across(starts_with("min")), na.rm = TRUE)) |> 
+  ungroup() |> 
+  group_by(sex, education) |> 
+  ggplot(aes(x = age, y = activity, color = sex)) +
+  geom_point(alpha = 0.6) + 
+  geom_smooth(method = "loess") +
+  facet_wrap(~education) +
+  labs(
+    title = "Total Activity vs. Age by Sex and Education Level",
+    x = "Age", y = "Total Daily Activity"
+  ) 
+```
+Higher education levels are associated with more consistent activity patterns across the lifespan, while lower education levels show more variability and a steeper decline in activity, especially for women. Gender differences are more pronounced in the lower education groups, with women showing higher activity at younger ages but a sharper decline as they age.
+
+**24-Hour activity courses**
+```{r}
+mims |> 
+  pivot_longer(cols = starts_with("min"), 
+               names_to = "minute", 
+               names_prefix = "min", 
+               values_to = "activity") |> 
+  mutate(minute = as.numeric(minute))  |> 
+  group_by(minute, sex, education) |> 
+  summarize(mean_activity = mean(activity, na.rm = TRUE)) |> 
+  ggplot(aes(x = minute, y = mean_activity, color = sex)) +
+  geom_point(alpha = 0.1) +
+  geom_smooth(size = 1.2) +
+  facet_wrap(~education, nrow = 3) +
+  scale_x_continuous(breaks = seq(0, 1440, by = 120), 
+                     labels = function(x) sprintf("%02d:00", x / 60)) +
+  labs(title = "24-Hour Activity Time Courses by Education Level and Sex",
+       x = "Time of Day",
+       y = "Mean Activity Level",
+       color = "Sex") 
+```
+While there are slight variations in the timing and magnitude of activity peaks, the overall daily activity pattern remains similar across all three education levels. Individuals have lower activity levels during the early morning and late night, with peaks in the late morning and early afternoon.
+
+Women tend to have higher morning activity levels, especially in the more educated groups. Men tend to have slightly higher afternoon and evening activity levels, especially in the "Less than high school" group.
+
+Individuals with higher education levels ("More than high school") seem to maintain higher and more consistent activity levels throughout the day, whereas those with lower education levels ("Less than high school") have lower overall activity and experience earlier declines in activity. 
+
+
+
+
 
 
