@@ -62,6 +62,7 @@ ny_noaa |>
   arrange(desc(count)) |> 
   head(n=5)
 ```
+
 The most commonly observed value for snowfall is 0. 
 
 **plot 1**
@@ -79,6 +80,7 @@ ny_noaa |>
     x = "Year", y = "Average Max Temperature (°C)"
   ) 
 ```
+
 There is a gradual increase around 0°C in temperatures  over time in Jan. In July, the temperatures are around 25-30°C across all years and didn't show obviously trend.
 In the January, there are a few data points slightly above or below 0°C, which could be outliers.
 
@@ -142,6 +144,7 @@ mims |>
     x = "Sex", y = "Age"
   ) 
 ```
+
 The "Less than high school" group shows a near-equal representation of men and women.
 There is a noticeable difference in the "High school equivalent" category, where men outnumber women.
 For the "More than high school" group, the balance between genders is relatively even, slightly favoring women. The "More than high school" group has the widest age range.
@@ -162,6 +165,7 @@ mims |>
     x = "Age", y = "Total Daily Activity"
   ) 
 ```
+
 Higher education levels are associated with more consistent activity patterns across the lifespan, while lower education levels show more variability and a steeper decline in activity, especially for women. Gender differences are more pronounced in the lower education groups, with women showing higher activity at younger ages but a sharper decline as they age.
 
 **24-Hour activity courses**
@@ -185,6 +189,7 @@ mims |>
        y = "Mean Activity Level",
        color = "Sex") 
 ```
+
 While there are slight variations in the timing and magnitude of activity peaks, the overall daily activity pattern remains similar across all three education levels. Individuals have lower activity levels during the early morning and late night, with peaks in the late morning and early afternoon.
 
 Women tend to have higher morning activity levels, especially in the more educated groups. Men tend to have slightly higher afternoon and evening activity levels, especially in the "Less than high school" group.
@@ -209,7 +214,15 @@ bike247 <- read.csv("citibike/July 2024 Citi.csv") |>
   janitor::clean_names() |> 
   mutate(year = 2024, month = "July")
 
-citibike = bind_rows(bike201, bike207, bike241, bike247) 
+citibike = bind_rows(bike201, bike207, bike241, bike247) |> 
+  mutate(
+    weekdays = factor(weekdays, 
+                      levels =c("Monday", "Tuesday", "Wednesday", "Thursday", 
+                                "Friday", "Saturday", "Sunday")),
+    month = factor(month),
+    year = factor(year),
+   rideable_type = factor(rideable_type)
+  )
 
 str(citibike)
 ```
@@ -228,6 +241,7 @@ citibike |>
     values_from = number) |> 
   knitr::kable()
 ```
+
 From 2020 to 2024, there is notable growth in total rides, especially in July 2024, where ridership has surged. This suggests increased popularity and perhaps expanded infrastructure or public interest in bike-sharing.
 
 **table 2**
@@ -241,14 +255,38 @@ citibike |>
   knitr::kable(caption = "Top 5 Most Popular Starting Stations for July 2024")
 ```
 
+**plot 1**
+```{r}
+citibike |> 
+  group_by(year, month, weekdays) |>  
+  summarize(median_duration = median(duration)) |> 
+  ggplot(aes(x = weekdays, y = median_duration, color = factor(year))) +
+  geom_point(aes(group = year)) +
+  geom_line(aes(group = year)) +  
+  facet_wrap(~ month + year, ncol = 2, nrow = 2) +  
+  labs(title = "Median Ride Duration by Day of Week, Month, and Year",
+       x = "Day of the Week", 
+       y = "Median Ride Duration (minutes)", 
+       color = "Year")
+```
 
+The colder month of January has generally shorter ride durations compared to July.
+In both 2020 and 2024, weekends tend to see longer rides, particularly in July.
 
+**plot 2**
+```{r}
+citibike |> 
+  filter(year == 2024) |> 
+  ggplot(aes(x = month, y = duration, color = rideable_type)) +
+  geom_boxplot(outlier.alpha = 0.7) +
+  facet_wrap(~ member_casual) +
+  labs(title = "Impact of Month, Membership Status, and Bike Type on Ride Duration in 2024",
+       x = "Month",
+       y = "Ride Duration (minutes)",
+       color = "Bike Type")
+```
 
-
-
-
-
-
-
-
+Electric bikes are more commonly used for longer rides, especially among casual riders.
+Members tend to have more consistent ride durations across both bike types.
+Ride duration is longer in July compared to January for both casual riders and members.
 
