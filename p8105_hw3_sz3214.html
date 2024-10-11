@@ -629,7 +629,7 @@ including: <code>ride_id</code>, <code>rideable_type</code>,
 <code>weekdays</code>, <code>duration</code>,
 <code>start_station_name</code>, <code>end_station_name</code>,
 <code>member_casual</code>, <code>year</code>, <code>month</code>.</p>
-<p><strong>table</strong></p>
+<p><strong>table 1</strong></p>
 <pre class="r"><code>citibike |&gt; 
   group_by(year, month, member_casual) |&gt;
   summarize(number = n()) |&gt; 
@@ -679,6 +679,45 @@ including: <code>ride_id</code>, <code>rideable_type</code>,
 in July 2024, where ridership has surged. This suggests increased
 popularity and perhaps expanded infrastructure or public interest in
 bike-sharing.</p>
+<p><strong>table 2</strong></p>
+<pre class="r"><code>citibike |&gt; 
+  filter(year == 2024, month == &quot;July&quot;) |&gt;  
+  group_by(start_station_name) |&gt;  
+  summarize(total_ride = n()) |&gt;  
+  arrange(desc(total_ride)) |&gt;  
+  slice_max(total_ride, n = 5) |&gt;
+  knitr::kable(caption = &quot;Top 5 Most Popular Starting Stations for July 2024&quot;)</code></pre>
+<table>
+<caption>Top 5 Most Popular Starting Stations for July 2024</caption>
+<thead>
+<tr class="header">
+<th align="left">start_station_name</th>
+<th align="right">total_ride</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Pier 61 at Chelsea Piers</td>
+<td align="right">163</td>
+</tr>
+<tr class="even">
+<td align="left">University Pl &amp; E 14 St</td>
+<td align="right">155</td>
+</tr>
+<tr class="odd">
+<td align="left">W 21 St &amp; 6 Ave</td>
+<td align="right">152</td>
+</tr>
+<tr class="even">
+<td align="left">West St &amp; Chambers St</td>
+<td align="right">150</td>
+</tr>
+<tr class="odd">
+<td align="left">W 31 St &amp; 7 Ave</td>
+<td align="right">146</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 
